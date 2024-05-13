@@ -1,15 +1,20 @@
+# Use a imagem base do Python
 FROM python:3.9
 
-RUN apt update && apt-get install -y xmlsec1
-
-COPY ./requirements.txt .
-
-RUN pip install -r requirements.txt
-
-COPY . /app
-
+# Define o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
-ENV PORT 8000
+# Copia o arquivo requirements.txt para o contêiner
+COPY requirements.txt .
 
-CMD gunicorn --bind :$PORT --workers 3 --timeout 60 --log-level=debug deploy.wsgi:application
+# Instala as dependências do Python
+RUN pip install -r requirements.txt
+
+# Copia o código-fonte da aplicação para o contêiner
+COPY . .
+
+# Expõe a porta 8000 para acesso externo
+EXPOSE 8000
+
+# Comando para iniciar o servidor Gunicorn com o Django
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "deploy.wsgi:application"]
