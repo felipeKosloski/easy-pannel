@@ -1,20 +1,15 @@
-# Use a imagem base do Python
 FROM python:3.9
 
-# Define o diretório de trabalho dentro do contêiner
-WORKDIR /app
+RUN apt update && apt-get install -y xmlsec1
 
-# Copia o arquivo requirements.txt para o contêiner
-COPY requirements.txt .
+COPY ./requirements.txt .
 
-# Instala as dependências do Python
 RUN pip install -r requirements.txt
 
-# Copia o código-fonte da aplicação para o contêiner
-COPY . .
+COPY . /app
 
-# Expõe a porta 8000 para acesso externo
-EXPOSE 8000
+WORKDIR /app
 
-# Comando para iniciar o servidor Django
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+ENV PORT 8000
+
+CMD gunicorn --bind :$PORT --workers 3 --timeout 60 --log-level=debug setup.wsgi:application
