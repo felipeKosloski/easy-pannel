@@ -12,4 +12,4 @@ WORKDIR /app
 
 ENV PORT 8000
 
-CMD gunicorn --bind :$PORT --workers 3 --timeout 60 --log-level=debug setup.wsgi:application
+CMD gunicorn --bind :$PORT --workers 3 --timeout 60 --log-level=debug deploy.wsgi:application
